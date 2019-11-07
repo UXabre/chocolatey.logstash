@@ -1,0 +1,14 @@
+﻿$ErrorActionPreference = 'Stop'
+
+$PackageName = 'logstash'
+$url32       = '__URL__'
+$checksum32  = '__HASH__'
+
+$packageArgs = @{
+  packageName    = $packageName
+  url            = $url32
+  checksum       = $checksum32
+  checksumType   = 'sha256'
+  unzipLocation  = Split-Path $MyInvocation.MyCommand.Definition
+}
+Install-ChocolateyZipPackage @packageArgs

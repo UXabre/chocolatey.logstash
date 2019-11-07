@@ -1,0 +1,70 @@
+version: '{build}'
+max_jobs: 1
+image: WMF 5
+branches:
+  only:
+  - master
+
+environment:
+  access_token:
+    secure: VnhlRdeQKo0vEffRa/4fm7qL1Hyp2I88QiSz/gkLf8GKgfl/zFn6VHtAGXLHgZiZ
+  choco_key:
+    secure: xTvFzXSxru6nwgek/cXKxdVE5Gx76FLcyFKcoG2pEtAJOVEa7aQvv78XAPn0qbmf
+
+install: []
+build_script:
+- ps: |
+    New-Item -Name "logstash" -ItemType "directory" -Force
+    New-Item -Name "logstash/tools" -ItemType "directory" -Force
+
+    $releases = ([xml]@(Invoke-WebRequest -Uri "https://github.com/elastic/logstash/releases.atom")).feed.entry | Sort-Object -Property title -Descending
+    $latest = $releases[0]
+
+    if (Test-Path (".version")) {
+        $packagedVersion = Get-Content ".version"
+    } else {
+        $packagedVersion = $null
+    }
+
+    $version = ($latest.title.split(" ") | select -Last 1)
+
+    if ($version -ne $packagedVersion) {
+        $package = $latest.title.replace(' ','-').ToLower() + ".zip"
+
+        $primaryLink = "https://artifacts.elastic.co/downloads/logstash/$package"
+        $alternativeLink = "https://download.elastic.co/logstash/logstash/$package"
+
+        $test = invoke-webrequest $primaryLink -DisableKeepAlive -UseBasicParsing -Method head
+        if ($test.StatusCode -eq 200) {
+            $url = $primaryLink
+        } else {
+            $url = $alternativeLink
+        }
+
+        invoke-webrequest $url -OutFile $package
+        $hash = (Get-FileHash $package -Algorithm sha256).Hash
+
+        $nuspecTemplate = Get-Content "logstash.in/logstash.nuspec.in"
+        $installTemplate = Get-Content "logstash.in/tools/chocolateyInstall.ps1.in"
+
+        $version | Out-File .version
+        $nuspecTemplate.replace("__URL__", $url).replace("__VERSION__", $version).replace("__HASH__", $hash) | Out-File "logstash/logstash.nuspec"
+        $installTemplate = $installTemplate.replace("__URL__", $url).replace("__VERSION__", $version).replace("__HASH__", $hash) | Out-File "logstash/tools/chocolateyInstall.ps1"
+
+        choco pack .\logstash\logstash.nuspec
+        choco push -k $($env:choco_key) .\logstash.$version.nupkg
+
+        $env:GIT_REDIRECT_STDERR = '2>&1'
+        git checkout $($env:APPVEYOR_REPO_BRANCH)
+        git config --global credential.helper store
+        Add-Content "$HOME\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+        git config --global user.email "arend.lapere@gmail.com"
+        git config --global user.name "UXabre"
+        git add ".version"
+        git commit -m "Release $version"
+        git push
+    }
+
+artifacts:
+  - path: .\logstash.*.nupkg
+    name: Logstash

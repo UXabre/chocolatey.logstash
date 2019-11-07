@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>logstash</id>
+    <version>__VERSION__</version>
+    <title>Logstash</title>
+    <owners>UXabre</owners>
+    <authors>Elastic</authors>
+    <licenseUrl>https://github.com/elasticsearch/logstash/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://www.elastic.co/products/logstash</projectUrl>
+    <iconUrl>https://static-www.elastic.co/v3/assets/bltefdd0b53724fa2ce/bltaa0b45e0ee3a768d/5c11ec85de5d49db0bf945c1/logo-elastic-logstash-lt.svg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Logstash is a tool for managing events and logs. You can use it to collect logs, parse them, and store them for later use (like, for searching).
+
+  This package is updated automatically to use new url when a new version comes out.</description>
+    <summary>Logstash Agent package</summary>
+    <releaseNotes>https://www.elastic.co/guide/en/logstash/current/releasenotes.html</releaseNotes>
+    <tags>logstash logging elastic admin</tags>
+    <projectSourceUrl>https://github.com/elastic/logstash</projectSourceUrl>
+    <packageSourceUrl>https://github.com/UXabre/chocolatey.logstash</packageSourceUrl>
+    <docsUrl>https://www.elastic.co/guide/en/logstash/current/index.html</docsUrl>
+    <dependencies>
+      <dependency id="openjdk" version="11.0.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
