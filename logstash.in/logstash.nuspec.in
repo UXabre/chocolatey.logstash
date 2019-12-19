@@ -6,7 +6,7 @@
     <title>Logstash</title>
     <owners>UXabre</owners>
     <authors>Elastic</authors>
-    <licenseUrl>https://github.com/elasticsearch/logstash/blob/master/LICENSE</licenseUrl>
+    <licenseUrl>https://raw.githubusercontent.com/elastic/logstash/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://www.elastic.co/products/logstash</projectUrl>
     <iconUrl>https://static-www.elastic.co/v3/assets/bltefdd0b53724fa2ce/bltaa0b45e0ee3a768d/5c11ec85de5d49db0bf945c1/logo-elastic-logstash-lt.svg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
